@@ -2,8 +2,9 @@ const express = require("express");
 const app = express();
 const PORT = 8080; // default port 8080
 
-app.use(express.urlencoded({ extended: true }));
 app.set("view engine", "ejs")
+
+app.use(express.urlencoded({ extended: true }));
 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -38,16 +39,23 @@ app.get("/u/:id", (req, res) => {
   res.redirect(longURL);
 });
 
-app.post("/urls/:id/delete", (req, res) => {
-  delete urlDatabase[req.params.id]
-  res.redirect('/urls')
-})
-
 app.post('/urls', (req, res) => {
   let string = generateRandomString()
   urlDatabase[string] = req.body.longURL
   res.redirect(`/urls/${string}`)
 })
+
+app.post('/urls/:id', (req,res) => {
+  console.log(req.body)
+  urlDatabase[req.params.id] = req.body.longURL
+  res.redirect('/urls')
+})
+
+app.post("/urls/:id/delete", (req, res) => {
+  delete urlDatabase[req.params.id]
+  res.redirect('/urls')
+})
+
 
 
 app.listen(PORT, () => {
