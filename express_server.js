@@ -38,6 +38,11 @@ app.get("/u/:id", (req, res) => {
   res.redirect(longURL);
 });
 
+app.post("/urls/:id/delete", (req, res) => {
+  delete urlDatabase[req.params.id]
+  res.redirect('/urls')
+})
+
 app.post('/urls', (req, res) => {
   let string = generateRandomString()
   urlDatabase[string] = req.body.longURL
