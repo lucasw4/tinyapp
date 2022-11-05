@@ -13,6 +13,19 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+const users = {
+  userRandomID: {
+    id: "userRandomID",
+    email: "user@example.com",
+    password: "password"
+  },
+  user2RandomID: {
+    id: "userRandomID",
+    email: "user@example.com",
+    password: "password"
+  }
+}
+
 const generateRandomString = function() {
   const alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
   const array = [];
@@ -79,6 +92,20 @@ app.post('/urls/:id', (req,res) => {
 app.post("/urls/:id/delete", (req, res) => {
   delete urlDatabase[req.params.id]
   res.redirect('/urls')
+})
+
+app.post('/register', (req, res) => {
+  const userID = generateRandomString();
+  const newUser = {
+    id: userID,
+    email: req.body.email,
+    password: req.body.password,
+  };
+  users[userID] = newUser;
+  console.log(users)
+  res.cookie("user_id", userID)
+  res.redirect('/urls')
+
 })
 
 
