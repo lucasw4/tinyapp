@@ -91,6 +91,11 @@ app.get("/u/:id", (req, res) => {
   res.redirect(longURL);
 });
 
+// Any invalid urls
+app.get("*", (req, res) => {
+  res.status(404).send("Page not found");
+});
+
 app.post("/logout", (req, res) => {
   res.clearCookie("user_id");
   res.redirect("/login");
