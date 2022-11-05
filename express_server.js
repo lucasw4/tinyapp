@@ -49,7 +49,7 @@ app.get('/urls', (req, res)=> {
     urls: findUserUrls(req.cookies['user_id'], urlDatabase)
   }
   if (!req.cookies['user_id']) {
-    res.redirect('/login')
+    res.send('You must login or register')
   } else {
     res.render("urls_index", templateVars)
   }
@@ -69,10 +69,11 @@ app.get("/urls/new", (req, res) => {
 app.get("/urls/:id", (req, res) => {
   if (!urlDatabase[req.params.id]) {
     res.send('That tinyURL doesn\'t exist yet!')
+  } else {
+    const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id].longURL,
+      user: users[req.cookies['user_id']] };
+    res.render("urls_show", templateVars);
   }
-  const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id].longURL,
-    user: users[req.cookies['user_id']] };
-  res.render("urls_show", templateVars);
 });
 
 app.get("/u/:id", (req, res) => {
@@ -111,13 +112,24 @@ app.post('/urls', (req, res) => {
 })
 
 app.post('/urls/:id', (req,res) => {
-  urlDatabase[req.params.id].longURL = req.body.longURL
-  res.redirect('/urls')
+  console.log(urlDatabase)
+  console.log(req.cookies['user_id'])
+  console.log(req.params)
+  const id = req.params.id;
+  if (urlDatabase[id].userID === req.cookies['user_id']) {
+    urlDatabase[req.params.id].longURL = req.body.longURL
+    res.redirect('/urls')
+  }
+  res.send('Not permitted')
 })
 
 app.post("/urls/:id/delete", (req, res) => {
-  delete urlDatabase[req.params.id]
-  res.redirect('/urls')
+  if (urlDatabase[req.params.id].userID === req.cookies['user_id']) {
+    delete urlDatabase[req.params.id]
+    res.redirect('/urls')
+  } else {
+    res.send("Not permitted")
+  }
 })
 
 app.post('/register', (req, res) => {
