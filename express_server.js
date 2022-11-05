@@ -35,7 +35,7 @@ const generateRandomString = function() {
   return array.join('')
 }
 
-const findUserEmail = function(object, email, variable) {
+const findUserByEmail = function(object, email, variable) {
   for (let keys in object) {
     if (email === object[keys].email && variable === "e") {
       return email;
@@ -43,15 +43,6 @@ const findUserEmail = function(object, email, variable) {
       return object[keys].password
     } else if (email === object[keys].email && variable === "i") {
       return object[keys].id
-    }
-  }
-  return null
-}
-
-const findUserPassword = function(object, email) {
-  for (let keys in object) {
-    if(email === object[keys].email) {
-      return object[keys].password
     }
   }
   return null
@@ -103,9 +94,9 @@ app.post('/logout', (req, res) => {
 })
 
 app.post('/login', (req, res) => {
-  const userEmail = findUserEmail(users, req.body.email, "e")
-  const userPassword = findUserEmail(users, req.body.email, "p")
-  const userID = findUserEmail(users, req.body.email, "i")
+  const userEmail = findUserByEmail(users, req.body.email, "e")
+  const userPassword = findUserByEmail(users, req.body.email, "p")
+  const userID = findUserByEmail(users, req.body.email, "i")
   if (req.body.email !== userEmail) {
     res.send("403: This email does not exist, please register")
   } else if (req.body.email === userEmail && req.body.password === userPassword){
@@ -136,7 +127,7 @@ app.post("/urls/:id/delete", (req, res) => {
 app.post('/register', (req, res) => {
   const userID = generateRandomString();
   const email = req.body.email
-  const emailExists = findUserEmail(users, email)
+  const emailExists = findUserByEmail(users, email)
   const newUser = {
     id: userID,
     email: req.body.email,
