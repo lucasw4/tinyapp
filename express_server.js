@@ -35,10 +35,23 @@ const generateRandomString = function() {
   return array.join('')
 }
 
-const userLookup = function(object, email) {
-  for (let i in object) {
-    if (email === object[i].email) {
+const findUserEmail = function(object, email, variable) {
+  for (let keys in object) {
+    if (email === object[keys].email && variable === "e") {
       return email;
+    } else if (email === object[keys].email && variable === "p") {
+      return object[keys].password
+    } else if (email === object[keys].email && variable === "i") {
+      return object[keys].id
+    }
+  }
+  return null
+}
+
+const findUserPassword = function(object, email) {
+  for (let keys in object) {
+    if(email === object[keys].email) {
+      return object[keys].password
     }
   }
   return null
@@ -86,12 +99,21 @@ app.get('/register', (req, res) => {
 
 app.post('/logout', (req, res) => {
   res.clearCookie('user_id')
-  res.redirect('/urls')
+  res.redirect('/login')
 })
 
 app.post('/login', (req, res) => {
-  res.cookie('username', req.body)
-  res.redirect('/urls')
+  const userEmail = findUserEmail(users, req.body.email, "e")
+  const userPassword = findUserEmail(users, req.body.email, "p")
+  const userID = findUserEmail(users, req.body.email, "i")
+  if (req.body.email !== userEmail) {
+    res.send("403: This email does not exist, please register")
+  } else if (req.body.email === userEmail && req.body.password === userPassword){
+    res.cookie('user_id', userID)
+    res.redirect('/urls')
+  } else {
+    res.send("403: Incorrect login info")
+  }
 })
 
 app.post('/urls', (req, res) => {
@@ -114,7 +136,7 @@ app.post("/urls/:id/delete", (req, res) => {
 app.post('/register', (req, res) => {
   const userID = generateRandomString();
   const email = req.body.email
-  const emailExists = userLookup(users, email)
+  const emailExists = findUserEmail(users, email)
   const newUser = {
     id: userID,
     email: req.body.email,
