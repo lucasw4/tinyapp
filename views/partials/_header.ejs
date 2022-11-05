@@ -21,7 +21,7 @@
     <% if(user) {%>
       <form method="POST" action="/logout">
         <label>User: <%- user.email %></label>
-        <button>Logout</button>
+        <button class="nav-item btn-primary">Logout</button>
       </form>
     <%} else {%>
       <div class = 'navbar-nav'>
