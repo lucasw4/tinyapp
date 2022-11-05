@@ -47,6 +47,13 @@ app.get("/u/:id", (req, res) => {
   res.redirect(longURL);
 });
 
+app.get('/register', (req, res) => {
+  const templateVars = {
+    username: req.cookies["username"]
+  };
+  res.render('urls_registration', templateVars)
+})
+
 app.post('/logout', (req, res) => {
   res.clearCookie('username')
   res.redirect('/urls')
