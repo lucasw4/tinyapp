@@ -24,10 +24,8 @@
         <button>Logout</button>
       </form>
     <%} else {%>
-      <form method="POST" action="/login">
-      <title>Login</title>
-      <input type="text" name="username" placeholder="username">
-      <button>Login</button>
+      <a class="nav-item nav-link" href="/login">Login</a>
+      <a class="nav-item nav-link" href="/register">Register</a>
     </form>
     <%}%>
   </nav>
