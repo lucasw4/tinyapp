@@ -35,6 +35,15 @@ const generateRandomString = function() {
   return array.join('')
 }
 
+const userLookup = function(object, email) {
+  for (let i in object) {
+    if (email === object[i].email) {
+      return email;
+    }
+  }
+  return null
+}
+
 app.get('/urls', (req, res )=> {
   const templateVars = { 
     user: users[req.cookies['user_id']],
@@ -68,7 +77,7 @@ app.get('/register', (req, res) => {
 })
 
 app.post('/logout', (req, res) => {
-  res.clearCookie('username')
+  res.clearCookie('user_id')
   res.redirect('/urls')
 })
 
@@ -96,14 +105,22 @@ app.post("/urls/:id/delete", (req, res) => {
 
 app.post('/register', (req, res) => {
   const userID = generateRandomString();
+  const email = req.body.email
+  const emailExists = userLookup(users, email)
   const newUser = {
     id: userID,
     email: req.body.email,
     password: req.body.password,
   };
-  users[userID] = newUser;
-  res.cookie("user_id", userID)
-  res.redirect('/urls')
+  if (newUser.email === "" || newUser.password === "") {
+    res.send("400 ERROR, bad request")
+  } else if (emailExists !== null) {
+    res.send("400 ERROR, bad request")
+  } else {
+    users[userID] = newUser;
+    res.cookie("user_id", userID)
+    res.redirect('/urls')
+  }
 
 })
 
