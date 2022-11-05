@@ -34,6 +34,7 @@ const users = {
 };
 
 // GET METHODS
+
 // Login method
 app.get("/login", (req, res) => {
   const templateVars = {
@@ -104,7 +105,8 @@ app.get("*", (req, res) => {
   res.status(404).send("Page not found");
 });
 
-// POST METHODS
+// POST METHODS \\
+
 // Get registration data
 app.post("/register", (req, res) => {
   const userID = generateRandomString();
