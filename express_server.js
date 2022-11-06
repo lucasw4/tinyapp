@@ -21,10 +21,12 @@ app.use(
   })
 );
 
+// Example database
 const urlDatabase = {
   b2xVn2: { longURL: "http://www.lighthouselabs.ca", id: "iVyfkz" },
 };
 
+// Example user database
 const users = {
   userRandomID: {
     id: "userRandomID",
@@ -63,7 +65,7 @@ app.get("/urls", (req, res) => {
     urls: findUserUrls(req.session["user_id"], urlDatabase),
   };
   if (!req.session["user_id"]) {
-    res.send("You must login or register");
+    res.status(403).send("You must login or register");
   } else {
     res.render("urls_index", templateVars);
   }
@@ -75,7 +77,7 @@ app.get("/urls/new", (req, res) => {
     user: users[req.session["user_id"]],
   };
   if (!req.session["user_id"]) {
-    res.send("You must be logged in to add any URLs");
+    res.status(403).send("You must be logged in to add any URLs");
   } else {
     res.render("urls_new", templateVars);
   }
@@ -84,11 +86,11 @@ app.get("/urls/new", (req, res) => {
 // View a new URLs page or Edit a url
 app.get("/urls/:id", (req, res) => {
   if (!urlDatabase[req.params.id]) {
-    res.send("That tinyURL doesn't exist yet!");
+    res.status(403).send("That tinyURL doesn't exist yet!");
   } else if (!req.session["user_id"]) {
-    res.send("You must be logged in to do that!");
+    res.status(403).send("You must be logged in to do that!");
   } else if (urlDatabase[req.params.id].userID !== req.session["user_id"]) {
-    res.send("This is not your TinyURL!");
+    res.status(403).send("This is not your TinyURL!");
   } else {
     const templateVars = {
       id: req.params.id,
@@ -124,9 +126,9 @@ app.post("/register", (req, res) => {
     password: hashedPassword,
   };
   if (newUser.email === "" || newUser.password === "") {
-    res.send("400 ERROR, bad request");
+    res.status(400).send("Bad request");
   } else if (findUser !== null) {
-    res.send("400 ERROR, bad request");
+    res.status(400).send("Bad request");
   } else {
     users[userID] = newUser;
     req.session["user_id"] = userID;
@@ -139,7 +141,7 @@ app.post("/login", (req, res) => {
   const user = findUserByEmail(users, req.body.email);
 
   if (req.body.email !== user.email) {
-    res.send("403: This email does not exist, please register");
+    res.status(403).send("This email does not exist, please register");
   } else if (
     req.body.email === user.email &&
     bcrypt.compareSync(req.body.password, user.password)
@@ -147,7 +149,7 @@ app.post("/login", (req, res) => {
     req.session["user_id"] = user.id;
     res.redirect("/urls");
   } else {
-    res.send("403: Incorrect login info");
+    res.status(403).send("Incorrect login info");
   }
 });
 
@@ -163,7 +165,7 @@ app.post("/urls", (req, res) => {
   const longURL = req.body.longURL;
   const userID = req.session["user_id"];
   if (!userID) {
-    res.send("Must be logged in to shorten a url");
+    res.status(403).send("Must be logged in to shorten a url");
   }
   urlDatabase[tinyURL] = { longURL, userID };
   res.redirect(`/urls/${tinyURL}`);
@@ -177,7 +179,7 @@ app.post("/urls/:id", (req, res) => {
     urlDatabase[req.params.id].longURL = longURL;
     res.redirect("/urls");
   } else {
-    res.send("Not permitted");
+    res.status(403).send("Not permitted");
   }
 });
 
@@ -187,7 +189,7 @@ app.post("/urls/:id/delete", (req, res) => {
     delete urlDatabase[req.params.id];
     res.redirect("/urls");
   } else {
-    res.send("That is not allowed!");
+    res.status(403).send("That is not allowed!");
   }
 });
 
