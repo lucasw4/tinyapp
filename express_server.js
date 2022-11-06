@@ -117,7 +117,7 @@ app.post("/register", (req, res) => {
   const userID = generateRandomString();
   const email = req.body.email;
   const hashedPassword = bcrypt.hashSync(req.body.password, 10);
-  const emailExists = findUserByEmail(users, email);
+  const findUser = findUserByEmail(users, email);
   const newUser = {
     id: userID,
     email: req.body.email,
@@ -125,7 +125,7 @@ app.post("/register", (req, res) => {
   };
   if (newUser.email === "" || newUser.password === "") {
     res.send("400 ERROR, bad request");
-  } else if (emailExists !== null) {
+  } else if (findUser !== null) {
     res.send("400 ERROR, bad request");
   } else {
     users[userID] = newUser;
@@ -136,17 +136,15 @@ app.post("/register", (req, res) => {
 
 // Login process
 app.post("/login", (req, res) => {
-  const userEmail = findUserByEmail(users, req.body.email, "e");
-  const userPassword = findUserByEmail(users, req.body.email, "p");
-  const userID = findUserByEmail(users, req.body.email, "i");
+  const user = findUserByEmail(users, req.body.email);
 
-  if (req.body.email !== userEmail) {
+  if (req.body.email !== user.email) {
     res.send("403: This email does not exist, please register");
   } else if (
-    req.body.email === userEmail &&
-    bcrypt.compareSync(req.body.password, userPassword)
+    req.body.email === user.email &&
+    bcrypt.compareSync(req.body.password, user.password)
   ) {
-    req.session["user_id"] = userID;
+    req.session["user_id"] = user.id;
     res.redirect("/urls");
   } else {
     res.send("403: Incorrect login info");

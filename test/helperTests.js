@@ -25,22 +25,22 @@ const testDatabase = {
 
 describe("findUserByEmail", function () {
   it("should return a user with valid email", function () {
-    const user = findUserByEmail(testUsers, "user@example.com", "e");
+    const user = findUserByEmail(testUsers, "user@example.com");
     const expectedEmail = "user@example.com";
     // Write your assert statement here
-    assert.equal(expectedEmail, user);
+    assert.equal(expectedEmail, user.email);
   });
   it("should return a user's pass with valid email", function () {
-    const user = findUserByEmail(testUsers, "user2@example.com", "p");
+    const user = findUserByEmail(testUsers, "user2@example.com");
     const expectedPass = "dishwasher-funk";
 
-    assert.equal(expectedPass, user);
+    assert.equal(expectedPass, user.password);
   });
   it("should return a user's userID with valid email", function () {
-    const user = findUserByEmail(testUsers, "user2@example.com", "i");
+    const user = findUserByEmail(testUsers, "user2@example.com");
     const expectedID = "user2RandomID";
 
-    assert.equal(expectedID, user);
+    assert.equal(expectedID, user.id);
   });
   it("should return null with invalid email", function () {
     const user = findUserByEmail(testUsers, "user243@example.com", "p");

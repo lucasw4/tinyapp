@@ -11,14 +11,8 @@ const generateRandomString = function () {
 // Helper function that finds either the email, userID or password using the third paramater, "e": email, "p": password, "i": userID
 const findUserByEmail = function (object, email, variable) {
   for (let keys in object) {
-    if (email === object[keys].email && variable === "e") {
-      return email;
-    }
-    if (email === object[keys].email && variable === "p") {
-      return object[keys].password;
-    }
-    if (email === object[keys].email && variable === "i") {
-      return object[keys].id;
+    if (object[keys].email === email) {
+      return object[keys];
     }
   }
   return null;
