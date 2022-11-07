@@ -8,8 +8,8 @@ const generateRandomString = function () {
   return array.join("");
 };
 
-// Helper function that finds either the email, userID or password using the third paramater, "e": email, "p": password, "i": userID
-const findUserByEmail = function (object, email, variable) {
+// Helper function that returns object of the user with the email that was given
+const findUserByEmail = function (object, email) {
   for (let keys in object) {
     if (object[keys].email === email) {
       return object[keys];
