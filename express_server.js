@@ -126,6 +126,10 @@ app.get("*", (req, res) => {
 
 // Get registration data
 app.post("/register", (req, res) => {
+  if (!req.body.email || !req.body.password) {
+    res.status(400).send("Must enter a valid email or password");
+    return;
+  }
   const userID = generateRandomString();
   const email = req.body.email;
   const hashedPassword = bcrypt.hashSync(req.body.password, 10);
@@ -135,14 +139,6 @@ app.post("/register", (req, res) => {
     email: req.body.email,
     password: hashedPassword,
   };
-  if (!newUser.email) {
-    res.status(400).send("Must enter an email");
-    return;
-  }
-  if (!req.body.password) {
-    res.status(400).send("Must enter a password");
-    return;
-  }
   if (findUser !== null) {
     res.status(400).send("Email already in use");
     return;
