@@ -121,7 +121,7 @@ app.post("/register", (req, res) => {
   };
   if (!newUser.email) {
     res.status(400).send("Must enter an email");
-  } else if (!newUser.password) {
+  } else if (!req.body.password) {
     res.status(400).send("Must enter a password");
   } else if (findUser !== null) {
     res.status(400).send("Email already in use");
