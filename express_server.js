@@ -105,8 +105,12 @@ app.get("/urls/:id", (req, res) => {
 
 // Redirect from short url to long url
 app.get("/u/:id", (req, res) => {
-  const longURL = urlDatabase[req.params.id].longURL;
-  res.redirect(longURL);
+  if (!urlDatabase[req.params.id]) {
+    res.status(404).send("That tinyURL doesn't exist yet!");
+  } else {
+    const longURL = urlDatabase[req.params.id].longURL;
+    res.redirect(longURL);
+  }
 });
 
 // Any invalid urls
