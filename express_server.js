@@ -186,6 +186,9 @@ app.post("/urls", (req, res) => {
     res.status(403).send("Must be logged in to shorten a url");
     return;
   }
+  if (!longURL) {
+    res.status(403).send("Must enter a valid URL to shorten");
+  }
   urlDatabase[tinyURL] = { longURL, userID };
   res.redirect(`/urls/${tinyURL}`);
 });
