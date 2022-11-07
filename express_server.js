@@ -101,9 +101,11 @@ app.get("/urls/:id", (req, res) => {
   }
   const templateVars = {
     id: req.params.id,
-    longURL: req.params.longURL,
+    longURL: urlDatabase[req.params.id].longURL,
     user: users[req.session["user_id"]],
   };
+  console.log(req.params);
+  console.log(urlDatabase[templateVars.id]);
   res.render("urls_show", templateVars);
 });
 
@@ -151,7 +153,14 @@ app.post("/register", (req, res) => {
 // Login process
 app.post("/login", (req, res) => {
   const user = findUserByEmail(users, req.body.email);
-
+  if (!req.body.email || !req.body.password) {
+    res.status(403).send("Must enter a valid email or password");
+    return;
+  }
+  if (user === null) {
+    res.status(403).send("This email does not exist, please register");
+    return;
+  }
   if (req.body.email !== user.email) {
     res.status(403).send("This email does not exist, please register");
     return;
