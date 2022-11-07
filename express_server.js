@@ -22,25 +22,19 @@ app.use(
 );
 
 // Example database
-const urlDatabase = {
-  b2xVn2: { longURL: "http://www.lighthouselabs.ca", id: "iVyfkz" },
-};
+const urlDatabase = {};
 
 // Example user database
-const users = {
-  userRandomID: {
-    id: "userRandomID",
-    email: "user@example.com",
-    password: "password",
-  },
-  user2RandomID: {
-    id: "userRandomID",
-    email: "user@example.com",
-    password: "password",
-  },
-};
+const users = {};
 
 // GET METHODS
+app.get("/", (req, res) => {
+  if (!req.session["user_id"]) {
+    res.redirect("/login");
+  } else {
+    res.redirect("/urls");
+  }
+});
 
 // Login method
 app.get("/login", (req, res) => {
@@ -125,10 +119,12 @@ app.post("/register", (req, res) => {
     email: req.body.email,
     password: hashedPassword,
   };
-  if (newUser.email === "" || newUser.password === "") {
-    res.status(400).send("Bad request");
+  if (!newUser.email) {
+    res.status(400).send("Must enter an email");
+  } else if (!newUser.password) {
+    res.status(400).send("Must enter a password");
   } else if (findUser !== null) {
-    res.status(400).send("Bad request");
+    res.status(400).send("Email already in use");
   } else {
     users[userID] = newUser;
     req.session["user_id"] = userID;
@@ -155,7 +151,7 @@ app.post("/login", (req, res) => {
 
 // Logout user and clear cookies
 app.post("/logout", (req, res) => {
-  req.session["user_id"] = null;
+  req.session = null;
   res.redirect("/login");
 });
 
