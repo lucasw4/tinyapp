@@ -41,7 +41,11 @@ app.get("/login", (req, res) => {
   const templateVars = {
     user: users[req.session["user_id"]],
   };
-  res.render("urls_login", templateVars);
+  if (req.session["user_id"]) {
+    res.redirect("/urls");
+  } else {
+    res.render("urls_login", templateVars);
+  }
 });
 
 // Registration method
@@ -49,7 +53,11 @@ app.get("/register", (req, res) => {
   const templateVars = {
     user: users[req.session["user_id"]],
   };
-  res.render("urls_registration", templateVars);
+  if (req.session["user_id"]) {
+    res.redirect("/urls");
+  } else {
+    res.render("urls_registration", templateVars);
+  }
 });
 
 // View homepage
