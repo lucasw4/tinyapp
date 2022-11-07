@@ -133,15 +133,19 @@ app.post("/register", (req, res) => {
   };
   if (!newUser.email) {
     res.status(400).send("Must enter an email");
-  } else if (!req.body.password) {
-    res.status(400).send("Must enter a password");
-  } else if (findUser !== null) {
-    res.status(400).send("Email already in use");
-  } else {
-    users[userID] = newUser;
-    req.session["user_id"] = userID;
-    res.redirect("/urls");
+    return;
   }
+  if (!req.body.password) {
+    res.status(400).send("Must enter a password");
+    return;
+  }
+  if (findUser !== null) {
+    res.status(400).send("Email already in use");
+    return;
+  }
+  users[userID] = newUser;
+  req.session["user_id"] = userID;
+  res.redirect("/urls");
 });
 
 // Login process
@@ -150,7 +154,9 @@ app.post("/login", (req, res) => {
 
   if (req.body.email !== user.email) {
     res.status(403).send("This email does not exist, please register");
-  } else if (
+    return;
+  }
+  if (
     req.body.email === user.email &&
     bcrypt.compareSync(req.body.password, user.password)
   ) {
@@ -174,10 +180,10 @@ app.post("/urls", (req, res) => {
   const userID = req.session["user_id"];
   if (!userID) {
     res.status(403).send("Must be logged in to shorten a url");
-  } else {
-    urlDatabase[tinyURL] = { longURL, userID };
-    res.redirect(`/urls/${tinyURL}`);
+    return;
   }
+  urlDatabase[tinyURL] = { longURL, userID };
+  res.redirect(`/urls/${tinyURL}`);
 });
 
 // Editing short url
