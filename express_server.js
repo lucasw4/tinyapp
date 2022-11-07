@@ -68,9 +68,9 @@ app.get("/urls", (req, res) => {
   };
   if (!req.session["user_id"]) {
     res.status(403).send("You must login or register");
-  } else {
-    res.render("urls_index", templateVars);
+    return;
   }
+  res.render("urls_index", templateVars);
 });
 
 // View new url page
@@ -80,37 +80,41 @@ app.get("/urls/new", (req, res) => {
   };
   if (!req.session["user_id"]) {
     res.status(403).send("You must be logged in to add any URLs");
-  } else {
-    res.render("urls_new", templateVars);
+    return;
   }
+  res.render("urls_new", templateVars);
 });
 
 // View a new URLs page or Edit a url
 app.get("/urls/:id", (req, res) => {
   if (!urlDatabase[req.params.id]) {
     res.status(403).send("That tinyURL doesn't exist yet!");
-  } else if (!req.session["user_id"]) {
-    res.status(403).send("You must be logged in to do that!");
-  } else if (urlDatabase[req.params.id].userID !== req.session["user_id"]) {
-    res.status(403).send("This is not your TinyURL!");
-  } else {
-    const templateVars = {
-      id: req.params.id,
-      longURL: req.params.longURL,
-      user: users[req.session["user_id"]],
-    };
-    res.render("urls_show", templateVars);
+    return;
   }
+  if (!req.session["user_id"]) {
+    res.status(403).send("You must be logged in to do that!");
+    return;
+  }
+  if (urlDatabase[req.params.id].userID !== req.session["user_id"]) {
+    res.status(403).send("This is not your TinyURL!");
+    return;
+  }
+  const templateVars = {
+    id: req.params.id,
+    longURL: req.params.longURL,
+    user: users[req.session["user_id"]],
+  };
+  res.render("urls_show", templateVars);
 });
 
 // Redirect from short url to long url
 app.get("/u/:id", (req, res) => {
   if (!urlDatabase[req.params.id]) {
     res.status(404).send("That tinyURL doesn't exist yet!");
-  } else {
-    const longURL = urlDatabase[req.params.id].longURL;
-    res.redirect(longURL);
+    return;
   }
+  const longURL = urlDatabase[req.params.id].longURL;
+  res.redirect(longURL);
 });
 
 // Any invalid urls
