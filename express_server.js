@@ -170,9 +170,10 @@ app.post("/urls", (req, res) => {
   const userID = req.session["user_id"];
   if (!userID) {
     res.status(403).send("Must be logged in to shorten a url");
+  } else {
+    urlDatabase[tinyURL] = { longURL, userID };
+    res.redirect(`/urls/${tinyURL}`);
   }
-  urlDatabase[tinyURL] = { longURL, userID };
-  res.redirect(`/urls/${tinyURL}`);
 });
 
 // Editing short url
@@ -183,7 +184,7 @@ app.post("/urls/:id", (req, res) => {
     urlDatabase[req.params.id].longURL = longURL;
     res.redirect("/urls");
   } else {
-    res.status(403).send("Not permitted");
+    res.status(403).send("This is not your URL to edit");
   }
 });
 
@@ -193,7 +194,7 @@ app.post("/urls/:id/delete", (req, res) => {
     delete urlDatabase[req.params.id];
     res.redirect("/urls");
   } else {
-    res.status(403).send("That is not allowed!");
+    res.status(403).send("This is not your URL to delete");
   }
 });
 
